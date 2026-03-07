@@ -1,0 +1,388 @@
+Q1. How do modern websites update content dynamically without refreshing the page? and which language enables this?
+
+JavaScript is an interpreter-based programming language used mainly for web development. It is lightweight and dynamically typed, meaning variable types 
+can change during runtime.
+
+JavaScript runs in all modern browsers and is used to make web pages dynamic and interactive, which is why it is called the “Language of the Web.”
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q2. Which JavaScript features allow handling user events and making background API calls without blocking the UI?
+
+Key features of JavaScript:
+--------------------------
+
+1️.supports both Client and Server-side Validation
+-------------------------
+Client and Server-side validation – validation can happen in both browser and server.
+
+Example: Login Page
+-------------------
+When a user logs into a website like banking / shopping / Gmail, JavaScript handles multiple things.
+When the user clicks Login, JavaScript first checks the inputs in the browser.
+
+Example:
+
+Email field empty
+Password less than required characters
+The browser immediately shows:
+❌ "Please enter a valid email"
+
+This happens before sending data to the server, which makes the application faster.
+
+2️. Event-driven Architecture
+----------------------------
+
+JavaScript waits for user actions (events).
+
+Example events:
+
+Click → Login button
+Typing → Search box
+Scroll → Load more products
+
+3️. Asynchronous Programming (Background API Calls)
+--------------------------------------------------
+
+After clicking Login, JavaScript sends a request to the server without freezing the page.
+
+Example:
+
+fetch("https://api.myapp.com/login")
+   .then(res => res.json())
+   .then(data => console.log(data))
+
+While the request is happening:
+
+User can still scroll
+User can click other buttons
+UI does not freeze
+
+This is possible because JavaScript uses non-blocking asynchronous execution.
+Asynchronous programming – JavaScript is single-threaded but non-blocking, allowing tasks like API calls to run in the background.
+
+Example: 
+-------
+In a login page, JavaScript listens for the click event, performs client-side validation, and then sends an asynchronous API request to the server 
+without blocking the UI.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q3. How does JavaScript allows a variable to store different types of values at runtime. How are its data types categorized?
+
+JavaScript data types are divided into Primitive and Non-Primitive.
+
+Primitive (Immutable)
+---------------------
+
+Number – whole numbers and decimals (64-bit).
+String – text values " " ' ' ` `.
+Boolean – true or false.
+Undefined – variable declared but value not assigned.
+Null – represents an empty value.
+BigInt – used for very large integers (ends with n).
+Symbol – unique identifier.
+
+Example:
+
+const sym1 = Symbol('id')
+const sym2 = Symbol('id')
+
+console.log(sym1 === sym2) // false
+
+Non-Primitive (Mutable)
+-----------------------
+
+1) Objects
+
+
+const person = {
+   name: "Aksha",
+   age: 25,
+   height: 5
+}
+
+2) Arrays
+
+Const numbers = [10,20,30]
+
+3) Functions
+
+Functions are also treated as objects in JavaScript.
+
+function greet(name){
+    return "Hello " + name
+}
+
+console.log(greet("Aksha"))
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q4. What will be the output of the following code and why?
+
+a) console.log(x)
+   var x = 10
+
+o/p-> undefined
+
+Hoisting is JavaScript’s default behavior where variable declarations are moved to the top of the scope during execution.
+Because var x is hoisted but the value assignment happens later
+
+b) console.log(y)
+   let y = 20
+
+o/p-> ReferenceError
+This happens due to TDZ (Temporal Dead Zone) — the time between variable declaration and initialization.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q5. What were the limitations of using var for variable declaration in JavaScript, and how were they addressed in ES6 with let and const?
+
+Before ES6, var caused issues like redeclaration, function scope leakage, and hoisting problems. ES6 introduced let and const to provide block scope and better 
+control over variable reassignment.
+
+| Feature   | var      | let       | const     |
+| --------- | -------- | --------- | --------- |
+| Redeclare | Yes      | No        | No        |
+| Reassign  | Yes      | Yes       | No        |
+| Scope     | Function | Block     | Block     |
+| Hoisting  | Yes      | Yes (TDZ) | Yes (TDZ) |
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q6. Why can a variable declared with var inside a block be accessed outside it, but let or const cannot?
+
+This is due to scope differences.
+
+var → Function scoped
+let / const → Block scoped
+
+Example:
+
+{
+   var a = 10
+}
+console.log(a) // works
+
+But:
+
+{
+   let b = 20
+}
+
+console.log(b) // error
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q7. What is the difference between == and ===?
+
+Loose Equality (==)
+Compares only values and performs type coercion.
+
+Note: Coercion means automatically converting one data type to another
+
+console.log(5 == "5") // true
+
+Strict Equality (===)
+Compares both value and datatype.
+
+console.log(5 === "5") // false
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q8. Which operators are used when both conditions must be true vs when at least one condition is true?
+
+Logical AND (&&)
+Returns true only if both conditions are true.
+
+console.log(true && true) // true
+
+Logical OR (||)
+Returns true if at least one condition is true.
+
+console.log(false || true) // true
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q9. What is the difference between a++ and ++a?
+
+Both are increment operators with different behaviours.
+
+Example:
+
+let a = 5
+
+console.log(a++) // 5
+console.log(a)   // 6
+
+Post-increment returns value first then increments.
+
+let b = 5
+
+console.log(++b) // 6
+
+Pre-increment increments first then returns value.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q10. When checking a variable against multiple values, why is switch being preferred over multiple 
+if-else statements?
+
+Both are conditional statements used to execute code based on conditions.
+
+if-else
+-------
+
+Used for complex conditions.
+Evaluates conditions sequentially.
+
+let num = 7
+
+if(num % 2 === 0){
+   console.log("Even number")
+}else{
+   console.log("Odd number")
+}
+
+Output->Odd number
+
+if checks the condition.
+If the condition is true, the if block executes.
+If the condition is false, the else block executes.
+
+switch
+------
+
+Used when checking one variable against multiple values.
+More readable and cleaner for such scenarios.
+
+let day = 2
+
+switch(day){
+   case 1:
+      console.log("Monday")
+      break
+
+   case 2:
+      console.log("Tuesday")
+      break
+
+   case 3:
+      console.log("Wednesday")
+      break
+}
+
+o/p-> Tuesday
+Without break, multiple cases will execute.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q11. How can we implement logic in JavaScript to reuse the same block of code multiple times?
+
+
+In JavaScript, looping statements are used to execute a block of code repeatedly until a condition becomes false.
+Instead of writing the same code multiple times, loops automate repetition.
+
+Types of Loops in JavaScript
+----------------------------
+
+1) for
+2) while
+3) do...while
+
+
+1️. for loop
+
+Used when the number of iterations is known.
+
+Example:
+
+for(let i = 1; i <= 5; i++){
+   console.log("Number:", i)
+}
+
+Output
+------
+
+Number: 1
+Number: 2
+Number: 3
+Number: 4
+Number: 5
+
+
+2️. while loop
+
+Used when the number of iterations is not known in advance and depends on a condition.
+
+Example
+-------
+
+let count = 1
+
+while(count <= 3){
+   console.log("Count:", count)
+   count++
+}
+
+Output
+------
+
+Count: 1
+Count: 2
+Count: 3
+
+
+3️. do...while loop
+
+Executes the code at least once, even if the condition is false.
+
+Example
+-------
+
+let num = 5
+
+do{
+   console.log("Value:", num)
+   num++
+}
+while(num < 5)
+
+Output
+------
+
+Value: 5
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q12. a) Write a JavaScript program to print numbers from 1 to 20, skipping numbers divisible by 5
+
+
+for(let i = 1; i <= 20; i++){
+   if(i % 5 === 0){
+      continue
+   }
+   console.log(i)
+}
+
+Explanation
+-----------
+
+Loop runs from 1 to 20
+continue skips numbers divisible by 5
+Output will skip: 5, 10, 15, 20
+
+
+
+b) Write a JavaScript program to find the largest of three numbers.
+
+let a = 10
+let b = 25
+let c = 15
+
+if(a > b && a > c){
+   console.log("a is largest")
+}else if(b > a && b > c){
+   console.log("b is largest")
+}else{
+   console.log("c is largest")
+}
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
