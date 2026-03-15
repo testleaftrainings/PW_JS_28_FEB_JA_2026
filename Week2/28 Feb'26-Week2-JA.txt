@@ -1,0 +1,433 @@
+Q1. How does trim() improve reliability in form input automation?
+
+//trim() method removes whitespace from both ends of a string and returns a new string, without 
+// modifying the original string.
+
+const cname = " Testleaf " 
+const trimmedName = cname.trim() //removes leading and trailing spaces
+console.log(trimmedName); //o/p ->Testleaf 
+
+//how to remove white space in between the string
+let comname="t e s t le a f"
+let trimmedComname = comname.replace(/\s/g, '') //string.replace(pattern, replacement)->g means global search and replaces all occurance else
+console.log(trimmedComname);
+
+
+/* /\s/g -The forward slashes indicate a Regular Expression (RegEx).
+A regular expression is a pattern used to search or match characters in a string.
+pattern → \s
+flag → g (without this flag, only the first occurrence would be replaced)
+
+| Character | Meaning         |
+| --------- | --------------- |
+| `" "`     | space           |
+| `\t`      | tab             |
+| `\n`      | new line        |
+| `\r`      | carriage return |
+| `\d`      | digit           |
+| `\w`      | word character  |
+| `\s`      | whitespace      |
+| `/ /`      | start and end of comment     |
+The backslash is an escape character. 
+
+
+Difference between replace(/\s/g, '') and replaceAll(" ","")
+-------------------------------------------------------------
+
+let text = "test\tleaf"
+text.replace(/\s/g, '') → testleaf
+text.replaceAll(" ", "") → test\tleaf (tab remains);|
+
+replace(/\s/g, '') removes all whitespace using regex, while replaceAll(" ", "") removes only the specified string (space) everywhere.
+
+*/
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q2. what is the difference between replace() and replaceAll()? When would you use replaceAll() in test Automation?
+
+
+replace() changes only the first match.
+replaceAll() changes every match in the string.
+In test automation, we use it when the same word/character appears many times (like commas in prices or placeholders in locators).
+
+// Number
+
+let price = "1,20,000";
+let cleanPrice = price.replaceAll(",", "");
+console.log(cleanPrice); // 120000
+
+//String
+
+let text = "Test Automation is Fun";
+let newText = text.replaceAll(" ", "-");
+console.log(newText);//Test-Automation-is-Fun
+
+//Alphanumeric
+
+let code = "ORD-123-123-123";
+let cleaned = code.replaceAll("-", "");
+console.log(cleaned); // ORD123123123
+
+//Alphanumeric with Special Symbols
+
+let product = "PR@#123$%45!";
+let cleaned = product.replaceAll(/[^a-zA-Z0-9]/g, "");
+console.log(cleaned); // PR12345
+
+
+let product = "PR@#123$%45!";
+
+// Extract only alphabets
+let letters = product.replace(/[^a-zA-Z]/g, "");
+
+// Extract only digits
+let numbers = product.replace(/[^0-9]/g, "");
+
+// Extract only special characters
+let specials = product.replace(/[a-zA-Z0-9]/g, "");
+
+console.log("Letters:", letters);     // PR
+console.log("Numbers:", numbers);     // 12345
+console.log("Specials:", specials);   // @#$%!
+
+
+replaceAll() in Test Automation
+-------------------------------
+
+Use Case: Essential for Data Sanitization.
+Automation scripts often scrape prices or IDs that contain symbols ($, ,). Use replaceAll() with a regex to clean the data for mathematical comparisons.
+
+const expectedPrice = "$1,000.50";
+// Removes everything except numbers and the decimal point
+const cleanPrice = expectedPrice.replaceAll(/[^0-9.]/g, ""); 
+console.log(cleanPrice); // "1000.50"
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q3.  In JavaScript, why strings are immutable? What does it mean when we say 'modifying' a string?
+
+Immutability means the data inside a string cannot be changed once created.
+The Reality: When you "modify" a string, JavaScript creates a new string in a new memory location.
+The Reference: The variable name simply stops pointing to the old memory address and starts pointing to the new one.
+
+let str = "test"; // Points to memory location A
+str = str + "leaf"; // Creates "testleaf" in location B; str now points to B
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q4. In an dynamic string: 'Order ID: #12345-Confirmed'. Write a quick logic using String methods (slice, split, or substring) to extract just the ID 12345?
+
+using split and slice
+----------------------
+
+Use split() to break the string at specific delimiters.
+
+let productDetails = "Order ID: #12345-Confirmed";
+let prod_status = productDetails.split("#"); // ["Order ID: ", "12345-Confirmed"]
+let prod_id = prod_status[1].split('-');    // ["12345", "Confirmed"]
+
+console.log(prod_id[0]); // Output: 12345
+
+using Substring
+---------------
+
+let productDetails = "Order ID: #12345-Confirmed";
+
+let start = productDetails.indexOf("#") + 1; // position after #
+let end = productDetails.indexOf("-");       // position of -
+
+let prod_id = productDetails.substring(start, end);
+
+console.log(prod_id); // Output: 12345
+
+
+| Feature                  | `slice`                         | `substring`                |
+| ------------------------ | ------------------------------- | -------------------------- |
+| Negative indices         | Allowed (count from end)        | Not allowed (treated as 0) |
+| Swap start & end         | No                              | Yes, automatically swapped |
+| Behavior on out-of-range | Returns empty string if invalid | Adjusts to valid range     |
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q5. We have a JavaScript function isValid(data) that checks if a field is populated.
+if (data) { return true; }
+This is causing a bug where the number 0 is treated as invalid (empty), but 0 is a valid input for our quantity field. How do you fix this validation logic?"
+
+Handling "Falsy" Values (The 0 Bug)
+Scenario: if (data) treats 0 as false, failing validation for quantity fields.
+
+Solution: Check specifically for null and undefined using strict inequality.
+
+function isValid(data) {
+    // Explicitly allow 0 by only blocking null or undefined
+    return data !== null && data !== undefined && data !== "";
+}
+console.log(isValid(0)); // Returns: true
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q6. Consider a string let str = 'Testleaf'. I want to change the 'T' to 'Q'.
+How does JavaScript handle string storage in memory? Since strings are immutable, how do we actually 'modify' them in our code?
+If I write str[0] = 'Q', what happens?
+
+Solution: No. Because strings are immutable, bracket notation is read-only. To change a character, you must reconstruct the string.
+
+let str = 'Testleaf';
+str[0] = 'Q'; // Silently fails; str is still 'Testleaf'
+
+// Correct Approach:
+str = 'Q' + str.slice(1); 
+console.log(str); // 'Qestleaf'
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q7. Take a sentence: 'Automation testing is incredibly important'.
+   Write a loop that finds and returns the longest word in that sentence.
+
+Loop through an array of words and track the maximum length found.
+
+let str = 'Automation testing is exceptionally important';
+let words = str.split(" ");
+let longest = "";
+
+for (let i = 0; i < words.length; i++) {
+    if (words[i].length > longest.length) {
+        longest = words[i];
+    }
+}
+console.log(longest); // "exceptionally"
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q8. What mechanism does Playwright use to interact with the browser?
+
+Playwright communicates with browsers using the Chrome DevTools Protocol (CDP) over WebSocket, allowing direct control of browser actions.
+
+CDP is a low-level protocol used by tools (like Playwright, Puppeteer) to control, inspect, and debug Chromium-based browsers.
+It allows direct access to browser internals like **DOM**, **network**, **console**, etc.
+
+Chromium
+--------
+
+Chromium is an open-source browser project by Google, which is the base for Chrome, Edge, Opera, Brave, and others. It uses the Blink engine and V8 JavaScript engine,
+making it fast and reliable. Playwright uses Chromium for automation because it’s lightweight, open, and widely compatible.”
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q9. How does Playwright support cross-browser testing?
+
+Playwright supports all major browser engines, allowing the same test code to run across multiple browsers using a single API. This enables true cross-browser testing 
+without modifying the test scripts.
+
+Multiple Browser Engines
+------------------------
+
+Playwright can automate the following browser engines:
+
+1. Chromium-based Browsers
+
+Google Chrome
+Microsoft Edge
+Other Chromium browsers like Brave, Opera, and Vivaldi
+
+2. WebKit
+
+WebKit is the engine used by Safari
+Playwright runs Safari’s engine through WebKit for testing
+
+3. Firefox
+Supports Mozilla Firefox
+
+Same Test Runs Across Browsers
+------------------------------
+
+The same test script can run on multiple browsers without changing the code.
+You only need to configure the browsers in the Playwright configuration file.
+
+Example browsers:
+
+Chromium
+Firefox
+WebKit
+
+Headless and Headed Mode
+------------------------
+
+Playwright supports two execution modes:
+
+Headless mode – Browser runs in the background without UI (faster for CI/CD).
+Headed mode – Browser UI is visible during test execution.
+
+Cross-Platform Support
+----------------------
+
+Playwright works on multiple operating systems:
+
+Windows
+macOS
+Linux
+
+It also supports mobile browser emulation using Chromium and WebKit to simulate Android and iOS browsers.
+
+Browser Installation
+--------------------
+
+1) Playwright automatically installs supported browsers.
+Install Playwright with browsers
+
+npx playwright install
+
+2) Install Playwright test package
+
+npm install -D @playwright/test
+
+3) Executing Playwright Tests
+Run a specific test file:
+
+npx playwright test filename.spec.ts
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q10. What is the significance of test() in Playwright?
+
+test() is a function provided by the Playwright Test Runner to define and execute a test case.
+It is the core function provided by @playwright/test that allows you to write automated tests.
+
+Key Significance
+----------------
+
+1. Defines a Test Case
+
+test() is used to create a test with a name and test logic.
+
+2. Provides Built-in Fixtures
+
+test() gives access to fixtures like page, browser, context, etc
+page is automatically created by Playwright.
+
+3. Supports Test Organization
+
+test() allows grouping and structuring tests using features like:
+
+test.describe() – group related tests
+test.beforeEach() – setup before every test
+test.afterEach() – cleanup after tests
+
+4. Enables Parallel Execution
+
+Playwright can run multiple test() cases in parallel, improving test execution speed.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q11. In the below Playwright test code, what would happen if await is omitted from the page.goto() line? 
+Explain the potential impact on test execution.
+
+import { test } from "@playwright/test";
+
+test("leafground application, autodismiss alert", async ({ page }) => {
+    await page.goto("https://www.leafground.com/alert.xhtml");
+});
+
+
+Solution:
+
+Browser launches — Playwright always launches the browser because test() starts a new context and page.
+
+Navigation starts asynchronously — The page begins loading, but the code does not wait for it to finish.
+
+Test may end too early — If there are no further awaits or steps, the test could finish before the page fully loads, and 
+any following actions (clicks, fills, assertions) will fail.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q12. How does Playwright handle auto-waiting and retries?
+
+Playwright auto-waits for elements to become visible, enabled, and attached to the DOM.
+It also retries failed steps (like click or fill) until timeout is hit, reducing flakiness.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q13. Practice questions
+
+a) 1. print login and the opentaps string from the URL?
+http://leaftaps.com/opentaps/control/login
+
+Solution:
+
+let url = "http://leaftaps.com/opentaps/control/login";
+
+// Split by "/"
+let parts = url.split("/"); // parts → ["http:", "", "leaftaps.com", "opentaps", "control", "login"], so  Get "opentaps" and "login"
+let opentaps = parts[3];
+let login = parts[5];
+
+console.log("opentaps:", opentaps);//opentaps
+console.log("login:", login);//login
+
+ 
+b) count the number of vowels in a string 'cucumber'
+
+Solution:
+
+function countVowels(str) {
+  let vowels = "aeiouAEIOU";
+  let count = 0;
+
+  for (let char of str) {
+    if (vowels.includes(char)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+// Test
+let input = "cucumber";
+console.log("Number of vowels:", countVowels(input));
+
+
+
+c) "You have a continuous string of server logs:
+ERROR: 404 [Time: 12:00] | INFO: Login Success [Time: 12:01] | ERROR: 500 [Time: 12:05]
+Question: I need an array containing only the timestamps where an ERROR occurred. How would you approach this?
+
+Task: Get an array of timestamps only where an ERROR occurred.
+
+Solution: Combine split() with match() and Regular Expressions.
+
+const logs = "ERROR: 404 [Time: 12:00] | INFO: Login Success [Time: 12:01] | ERROR: 500 [Time: 12:05]";
+const entries = logs.split("|");
+
+for (const entry of entries) {
+    if (entry.includes("ERROR")) {
+        const time = entry.match(/\[Time: (.*?)\]/);
+        console.log(time[1]); // Output: 12:00, 12:05
+    }
+}
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
