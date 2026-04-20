@@ -1,0 +1,101 @@
+1.How do you configure a global APIRequestContext so that every request automatically includes an Authorization: Bearer <token> header and a baseURL, so you don't have to repeat them in every file?
+
+You can configure a global APIRequestContext with default headers and a baseURL in your Playwright configuration file (playwright.config.ts) 
+
+ use: {
+    // Other options...
+
+    // Configure the API base URL and default headers
+    baseURL: 'https://example.com',
+    extraHTTPHeaders: {
+      'Accept': 'application/json',
+      // The authorization header should ideally be set using
+      // environment variables or a secure vault, not hardcoded.
+      'Authorization': `Bearer ${process.env.API_TOKEN}`,
+    },
+  },
+  
+2.Let's say an api request is returning nearly a 1000 record what are the validation you  will be perfomrming in that response
+Status Code
+Response Time
+Schema Validation
+
+3.can you tell me the differnece between 401 and 403
+
+401 Unauthorized: The client is not authenticated and needs to provide valid authentication credentials (e.g., log in or provide a correct token) to access the resource 
+
+403 Forbidden: The client is authenticated, but does not have the necessary permissions to access the requested resource. The server refuses the action entirely
+
+
+
+4.can you tell me the differnece between 503 and 504
+
+503 Service Unavailable: The server is temporarily unable to handle the request due to maintenance or being overloaded.
+
+504 Gateway Timeout: The server, while acting as a gateway or proxy, did not receive a timely response from an upstream server it needed to access to complete the request 
+ 
+
+5. how will you be calcualting and performance or responcse time of api in the playwright api fixtures 
+
+test('should return data within performance threshold', async ({ request }) => {
+  const startTime = perfomrance.now(); // Alternative manual calculation
+  const response = await request.get('/records');
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+ 
+  expect(response.status()).toBe(200);
+  // Assert the duration is within an acceptable limit
+  expect(builtinDuration).toBeLessThan(1000); // e.g., less than 1 second
+  console.log(`Response time: ${builtinDuration}ms`);
+});
+
+
+6. 302 through which we can stop the redirect of the API URL so that we could see the response up to the point before it redirects. Can we stop the redirection through any mechanism?
+
+test('should check redirect status', async ({ request }) => {
+  const response = await request.get('/short-url', {
+    maxRedirects: 0, // Ensures no redirects are followed
+  });
+  
+  // The response status will be 302 (Found)
+  expect(response.status()).toBe(302);
+  // You can also check the new location header
+  expect(response.headers()['location']).toBe('https://example.com');
+});
+
+Setting maxRedirects to 0 achieves the desired control 
+
+
+7.How can API testing be integrated with browser-based testing in Playwright?
+
+ Example:
+
+  Use API to **create a user/session** → get auth token.
+  Use that token in browser context → skip login UI.
+  
+8. What are the limitations of API testing using Playwright compared to Postman or REST Assured?**
+
+Playwright’s API testing  is **basic** (good for integration with UI tests).
+Postman/REST Assured are more feature-rich for:
+
+  * Extensive assertions
+  * Advanced data-driven testing
+  * Load/performance testing
+  
+9.What are some challenges you faced while integrating API and UI tests in Playwright?**
+
+ Keeping test data consistent between API & UI.
+ Managing authentication/session tokens across layers.
+ Flaky tests if API is unstable.
+ 
+10. How do you handle "Race Conditions" where a UI test starts before the API data is ready?
+
+Use page.waitForResponse() or page.waitForRequest(). Instead of using hard-coded sleep or timeout, you wait for the specific API trigger that signals the UI is ready to be interacted with.
+
+
+11.What are "Negative Scenarios" you should test?
+
+Sending an empty body to a POST request.
+Using invalid data types (e.g., sending a string where an integer is expected).
+Requesting a resource that doesn't exist (404).
+Sending an expired or malformed token (401).
